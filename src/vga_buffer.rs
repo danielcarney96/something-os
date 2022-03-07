@@ -145,3 +145,27 @@ lazy_static! {
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     });
 }
+
+#[test_case]
+fn test_println() {
+    println!("Some VGA buffer output");
+}
+
+#[test_case]
+fn test_multiple_println() {
+    for _ in 0..10 {
+        println!("Lots of VGA buffer output");
+    }
+}
+
+#[test_case]
+fn test_println_appears() {
+    let string = "Some output";
+
+    println!("{}", string);
+
+    for (i, c) in string.chars().enumerate() {
+        let screen_char = WRITER.lock().buffer.chars[BUFFER_HEIGHT - 2][i].read();
+        assert_eq!(char::from(screen_char.ascii_char), c);
+    }
+}
